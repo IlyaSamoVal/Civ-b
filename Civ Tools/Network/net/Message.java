@@ -6,7 +6,7 @@ public class Message implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public static enum Prefix {
+	public enum Prefix {
 		// connection control
 		CONNECTION_OK,
 		CONNECTION_ERR,
@@ -63,6 +63,9 @@ public class Message implements Serializable {
 		DEL_TEAM,
 		DEL_PLAYER,
 		DEL_UNIT,
+		
+		// player actions
+		PLAYER_ACTION, // action opcodes -> data.units.ConstAction
 		
 		// other
 		DEBUG;

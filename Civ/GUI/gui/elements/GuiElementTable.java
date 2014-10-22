@@ -10,9 +10,11 @@ import java.util.Vector;
 import javax.media.opengl.GL3;
 
 import misc.Enums;
+import painter.Painter;
 import player.Player;
 import player.Team;
 import scenedata.game.GameData;
+import tasks.Task;
 import gui.GuiElement;
 import gui.misc.TableLine;
 
@@ -25,8 +27,8 @@ public class GuiElementTable extends GuiElement {
 	protected int collumns;
 	protected Vector<TableLine> list;
 	
-	public GuiElementTable(int collumns) {
-		super();
+	public GuiElementTable(String title, int collumns) {
+		super(title);
 		setTexture("pane");
 		this.collumns = collumns;
 		list = new Vector<TableLine>();
@@ -53,6 +55,10 @@ public class GuiElementTable extends GuiElement {
 		}
 	}
 	
+	public int getSelectedLineNumber(){
+		return selectedLine;
+	}
+	
 	public void updateList(String data){
 		list.clear();
 		String [] arr = data.split(":");
@@ -77,6 +83,8 @@ public class GuiElementTable extends GuiElement {
 		else{
 			this.selectedLine = lineId;
 		}
+		
+		Painter.addTask(new Task(Enums.Task.GUI_TABLE_UPDATESELECTION, this));
 	}
 	
 	public void add(TableLine line){
@@ -88,11 +96,15 @@ public class GuiElementTable extends GuiElement {
 		HashMap <Integer, Set<Player>> table = new HashMap<Integer, Set<Player>>();
 			
 		for(Team team: gamedata.users.teams.values()){
-			table.put(team.id, new HashSet<Player>());
+			if(team != null){ // !!check for null, because Team can receive AFTER receiving Player
+				table.put(team.id, new HashSet<Player>());
+			}
 		}
 		
 		for(Player player: gamedata.users.players.values()){
-			table.get(player.teamId).add(player);
+			if(table.containsKey(player.teamId)){ // !!check for null, because Player can be receive AFTER receiving Team
+				table.get(player.teamId).add(player);
+			}
 		}
 		
 		list.clear();
@@ -125,6 +137,10 @@ public class GuiElementTable extends GuiElement {
 				list.add(playerLine);
 			}
 		}
+	}
+	
+	public void clear(){
+		list.clear();
 	}
 	
 	public void remove(int collumn, String data) { // search specify (String)data in (int)collumn and remove line while data finded

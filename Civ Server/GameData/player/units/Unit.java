@@ -1,5 +1,6 @@
 package player.units;
 
+import data.units.ConstUnits;
 import net.Message;
 import net.Message.Prefix;
 import interfaces.Sentble;
@@ -19,6 +20,15 @@ public class Unit implements Sentble{
 	
 	public Unit() {
 		this.id = ID++;
+		this.type = ConstUnits.unitNull;
+	}
+	
+	public Unit(int playerId, int type, int x, int y) {
+		this.id = ID++;
+		this.type = type;
+		this.playerId = playerId;
+		this.x = x;
+		this.y = y;
 	}
 
 	@Override
@@ -53,12 +63,7 @@ public class Unit implements Sentble{
 	}
 	
 	@Override
-	public void buildObj(String [] data) {
-
-	}
-
+	public void buildObj(String [] data) {};
 	@Override
-	public void updateObj(String [] data) {
-
-	}
+	public void updateObj(String [] data) {};
 }

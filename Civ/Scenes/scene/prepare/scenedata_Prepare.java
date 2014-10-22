@@ -41,6 +41,14 @@ public class scenedata_Prepare extends SceneData {
 			case MOUSE_RELEASED:
 				gui_ElementClick.execute(gui);
 				break;
+				
+			case KEYBOARD_PRESSED:
+				prepare_Key.pressed(gamedata, (String)task.data);
+				break;
+				
+			case KEYBOARD_RELEASED:
+				prepare_Key.released(gamedata, gui, (String)task.data);
+				break;
 			
 			case GUI_UPDATE_POSITION:
 				gui_UpdatePosition.execute(gui);
@@ -70,6 +78,10 @@ public class scenedata_Prepare extends SceneData {
 				
 			case GAME_OBJ_TEAM:
 				game_Data.objTeam(gui, gamedata, (String)task.data);
+				break;
+				
+			case GAME_OBJ_UNIT:
+				game_Data.objUnit(gui, gamedata, (String)task.data);
 				break;
 				
 			case GAME_UPD_PLAYER:

@@ -3,6 +3,7 @@ package network;
 import game.GamesMng;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -16,14 +17,23 @@ public class Server implements Runnable {
 	protected static ServerSocket server;
 	
 	public Server() throws IOException {
+		Log.msg(Const.title + " v" + Const.version + "." + Const.subVersion);
+		Log.msg(ToolsConst.title + " v" + ToolsConst.version + "." + ToolsConst.subVersion);
+		
+		try {
+			server = new ServerSocket(Const.port);
+		}
+		catch(BindException e){
+			Log.err("Another server is already bind port: " + Const.port);
+			System.in.read();
+			System.exit(0);
+		}
 		
 		new ClientPool();
 		new TaskPool();
 		new GamesMng();
 		
-		server = new ServerSocket(Const.port);
-		Log.msg(Const.title + " v" + Const.version + "." + Const.subVersion + " is runned");
-		Log.msg(ToolsConst.title + " v" + ToolsConst.version + "." + ToolsConst.subVersion);
+		Log.service("Server launched");
 	}
 
 	@Override

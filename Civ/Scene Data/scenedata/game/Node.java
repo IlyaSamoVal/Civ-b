@@ -1,19 +1,27 @@
 package scenedata.game;
 
-import java.util.Vector;
+import java.awt.Graphics;
+import java.util.HashSet;
+
+import javax.media.opengl.GL3;
 
 import player.units.Unit;
+import player.units.UnitsMng;
+import recources.Recources;
+import render.Drawble;
+import misc.Const;
 import misc.Enums;
 
-public class Node {
+public class Node implements Drawble {
 	
 	// Land data
 	public byte height = 0;
 	
 	// Units data
-	private Vector<Unit> units;
+	private HashSet<Integer> units;	   // set<unitId>
+	private HashSet<Integer> waypoint; // set<unitId>
 	
-	// Terrain data
+	// Drawing data
 	public Enums.Terrain terrainType;
 	public int border;
 	
@@ -21,35 +29,63 @@ public class Node {
 	public byte geology;
 	
 	public Node() {
-		units = new Vector<Unit>();
+		units = new HashSet<Integer>();
+		waypoint = new HashSet<Integer>();
 	}
 	
-	public void add(Unit unit){
-		units.add(unit);
+	public void addUnit(Unit unit){
+		units.add(unit.id);
+	}
+
+	public void removeUnit(int unitId) {
+		units.remove(unitId);
 	}
 	
-	public Unit pop(int id){
-		for(int i = 0; i < units.size(); ++i){
-			if(units.get(i).id == id){
-				Unit tmp = units.get(i);
-				units.remove(i);
-				return tmp;
-			}
+	public HashSet<Integer> getAll() {
+		return units;
+	}
+	
+	public void addWaypoint(int unitId){
+		waypoint.add(unitId);
+	}
+	
+	public void removeWaypoint(int unitId){
+		waypoint.remove(unitId);
+	}
+	
+	public boolean haveWaypoints(){
+		if(waypoint.size() > 0){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	// Draw units
+	private int drawX;
+	private int drawY;
+	
+	public void draw(Graphics g, int drawX, int drawY) {
+		this.drawX = drawX;
+		this.drawY = drawY;
+		draw(g);
+	}
+	
+	@Override
+	public void draw(Graphics g) {
+		if(haveWaypoints()){
+			g.drawImage(Recources.getImage(Const.imgNull), drawX, drawY, 32, 32, null);
 		}
 		
-		return null;
-	}
-	
-	public void remove(int id){
-		for(int i = 0; i < units.size(); ++i){
-			if(units.get(i).id == id){
-				units.remove(i);
-				return;
-			}
+		for(Integer unitId: units){
+			Unit unit = UnitsMng.getUnit(unitId);
+			unit.draw(g, drawX, drawY);
 		}
 	}
-	
-	public Vector<Unit> getAll(){
-		return units;
+
+	@Override
+	public void draw(GL3 gl) {
+		
 	}
 }

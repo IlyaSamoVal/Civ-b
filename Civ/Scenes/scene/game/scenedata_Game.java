@@ -1,5 +1,7 @@
 package scene.game;
 
+import gui.elements.GuiElementTable;
+
 import java.io.IOException;
 
 import net.Message;
@@ -7,6 +9,7 @@ import misc.Enums;
 import scenedata.SceneData;
 import scenedata.game.GameData;
 import scenedata.game.Node;
+import script.Script;
 import script.ScriptsNetwork;
 import script.gui.gui_CurosorHide;
 import script.gui.gui_CursorShow;
@@ -68,6 +71,10 @@ public class scenedata_Game extends SceneData {
 			case GUI_SELECTION_SELECT:
 				gui_ElementSelect.execute(gui, (String)task.data);
 				break;
+				
+			case GUI_TABLE_UPDATESELECTION:
+				game_PlayerActions.updateTableSelection(gui, (GuiElementTable)task.data);
+				break;
 		
 			case PAINTER_CHANGE_SCENE:
 				painter_SwitchScene.execute((Enums.Scene)task.data);
@@ -78,12 +85,20 @@ public class scenedata_Game extends SceneData {
 				break;
 			
 			case SCENE_SELECTON:
-				game_SelectNode.execute(gamedata);
+				game_SelectNode.selectNode(gamedata);
+				break;
+				
+			case SCENE_SUBSCRIBER_ADD:
+				subscriberAdd((Script)task.data, gamedata);
+				break;
+				
+			case SCENE_SUBSCRIBER_DEL:
+				subscriberRemove();
 				break;
 				
 			// scene events
 			case GAME_SELECT_NODE:
-				game_SelectNode.execute(gui, (Node)task.data);
+				game_SelectNode.updateGuiData(gui, (Node)task.data);
 				break;
 				
 			default: break;

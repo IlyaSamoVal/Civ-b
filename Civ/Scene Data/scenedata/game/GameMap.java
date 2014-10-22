@@ -8,7 +8,6 @@ import builder.GameMapGenerator;
 import misc.Const;
 import misc.Enums;
 import misc.Environment;
-import misc.Tools;
 import recources.Recources;
 import recources.nongl.Tile;
 
@@ -33,7 +32,8 @@ public class GameMap {
 	protected Image imgTerrainLand;
 	
 	// data
-	public Node [][] nodes;
+	public Node [][] map;
+	public byte [][] height;
 	
 	public GameMap(long seed, int sizeX, int sizeY) {
 		this.seed = seed;
@@ -56,14 +56,14 @@ public class GameMap {
 	}
 	
 	private void generateMap(){
-		nodes = new Node[sizeX][sizeY];
-		byte [][] height = GameMapGenerator.buildHeightMap(seed, sizeX, sizeY);
+		map = new Node[sizeX][sizeY];
+		height = GameMapGenerator.buildHeightMap(seed, sizeX, sizeY);
 		byte [][] geology = GameMapGenerator.buildGeologyMap(seed, sizeX, sizeY);
 		for(int i = 0; i < sizeX; ++i){
 			for(int j = 0; j < sizeY; ++j){
-				nodes[i][j] = new Node();
-				nodes[i][j].height = height[i][j];
-				nodes[i][j].geology = geology[i][j];
+				map[i][j] = new Node();
+				map[i][j].height = height[i][j];
+				map[i][j].geology = geology[i][j];
 			}
 		}
 	}
@@ -72,11 +72,11 @@ public class GameMap {
 		for(int i = 0; i < sizeX; ++i){
 			for(int j = 0; j < sizeY; ++j){
 				// terrain atlas
-				if(nodes[i][j].height == 0){
-					nodes[i][j].terrainType = Enums.Terrain.WATER;
+				if(map[i][j].height == 0){
+					map[i][j].terrainType = Enums.Terrain.WATER;
 				}
 				else{
-					nodes[i][j].terrainType = Enums.Terrain.LAND;
+					map[i][j].terrainType = Enums.Terrain.LAND;
 				}
 			}
 		}
@@ -127,25 +127,25 @@ public class GameMap {
 
 			switch(counter){
 				case 0:
-					if(j - 1 >= 0 && checkNode(nodes[getX(i-1)][j-1], nodes[i][j])) {
+					if(j - 1 >= 0 && checkNode(map[getX(i-1)][j-1], map[i][j])) {
 						data += 0b1;
 					}
 					break;
 					
 				case 1:
-					if(j - 1 >= 0 && checkNode(nodes[i][j-1], nodes[i][j])) {
+					if(j - 1 >= 0 && checkNode(map[i][j-1], map[i][j])) {
 						data += 0b10;
 					}
 					break;
 					
 				case 2:
-					if(j - 1 >= 0 && checkNode(nodes[getX(i+1)][j-1], nodes[i][j])) {
+					if(j - 1 >= 0 && checkNode(map[getX(i+1)][j-1], map[i][j])) {
 						data += 0b100;
 					}
 					break;
 					
 				case 3:
-					if(checkNode(nodes[getX(i-1)][j], nodes[i][j])) {
+					if(checkNode(map[getX(i-1)][j], map[i][j])) {
 						data += 0b1000;
 					}
 					break;
@@ -155,24 +155,24 @@ public class GameMap {
 					break;
 					
 				case 5:
-					if(checkNode(nodes[getX(i+1)][j], nodes[i][j])) {
+					if(checkNode(map[getX(i+1)][j], map[i][j])) {
 						data += 0b10000;
 					}
 					break;
 					
 				case 6:
-					if(j + 1 < sizeY && checkNode(nodes[getX(i-1)][j+1], nodes[i][j])) {
+					if(j + 1 < sizeY && checkNode(map[getX(i-1)][j+1], map[i][j])) {
 						data += 0b100000;
 					}
 					break;
 					
 				case 7:
-					if(j + 1 < sizeY && checkNode(nodes[i][j+1], nodes[i][j])){
+					if(j + 1 < sizeY && checkNode(map[i][j+1], map[i][j])){
 						data += 0b1000000;
 					}
 					break;
 				case 8:
-					if(j + 1 < sizeY && checkNode(nodes[getX(i+1)][j+1], nodes[i][j])){
+					if(j + 1 < sizeY && checkNode(map[getX(i+1)][j+1], map[i][j])){
 						data += 0b10000000;
 					}
 					break;
@@ -182,7 +182,7 @@ public class GameMap {
 			}
 		}
 		
-		nodes[i][j].border = data;
+		map[i][j].border = data;
 	}
 	
 	public void draw(Graphics g) {
@@ -231,12 +231,12 @@ public class GameMap {
 	private void draw(Graphics g, int i, int j, int x, int y){
 		switch(drawMode) {
 			case HEIGHT:	
-				g.drawImage(Recources.getImage("grey"+nodes[i][j].height), x*nodeX, y*nodeY, null);
+				g.drawImage(Recources.getImage("grey"+map[i][j].height), x*nodeX, y*nodeY, null);
 				break;
 				
 			case TERRAIN:
 				// draw Terrain
-				if(nodes[i][j].terrainType == Enums.Terrain.WATER){
+				if(map[i][j].terrainType == Enums.Terrain.WATER){
 					g.drawImage(imgTerrainWater, x*nodeX, y*nodeY, null);
 				}
 				else{
@@ -244,23 +244,26 @@ public class GameMap {
 				}
 			
 				// draw border
-				if(nodes[i][j].border != 0){
+				if(map[i][j].border != 0){
 					drawBorder(g, imgTerrainWaterBorder, i, j, x, y);
 				}
 				break;
 				
 			case GEOLOGY:
-				g.drawImage(Recources.getImage("geology" + nodes[i][j].geology), x*nodeX, y*nodeY, null);
+				g.drawImage(Recources.getImage("geology" + map[i][j].geology), x*nodeX, y*nodeY, null);
 				break;
 		}
+		
+		// draw Units
+		map[i][j].draw(g, x*nodeX, y*nodeY);
 	}
 	
 	private void drawNode(Graphics g, Image atlas, int i, int j, int x, int y){
-		drawFromAtlas(g, atlas, nodes[i][j].height, x, y);
+		drawFromAtlas(g, atlas, map[i][j].height, x, y);
 	}
 
 	private void drawBorder(Graphics g, Image atlas, int i, int j, int x, int y){
-		int data = nodes[i][j].border;
+		int data = map[i][j].border;
 		
 		for(int bit = 1, counter = 0; counter < 8; ++counter, bit = bit << 1){
 			if((data & bit) > 0){
@@ -297,16 +300,16 @@ public class GameMap {
 		for(int i = 0; i < sizeX; ++i){
 			for(int j = 0; j < sizeY; ++j){
 
-				if(nodes[i][j].height == 0){
+				if(map[i][j].height == 0){
 					rgb = 0x0000FF;
 					rgbHeight = 0x0000FF;
 				}
 				else{
 					rgb = 0x2CA757; // green
-					rgbHeight = ((int)nodes[i][j].height*16 << 16)  + ((int)nodes[i][j].height*16 << 8) + (int)nodes[i][j].height*16;
+					rgbHeight = ((int)map[i][j].height*16 << 16)  + ((int)map[i][j].height*16 << 8) + (int)map[i][j].height*16;
 				}
 				
-				int geology = nodes[i][j].geology;
+				int geology = map[i][j].geology;
 				if(geology % 4 == 0)
 					rgbGeology = (int)geology*16 << 16 + (int)geology << 8 + (int)geology;
 				if(geology % 4 == 1)

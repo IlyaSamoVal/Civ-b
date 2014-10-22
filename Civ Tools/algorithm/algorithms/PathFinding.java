@@ -7,7 +7,7 @@ import java.util.Comparator;
 
 import misc.ToolsEnums;
 
-public class PahtFinding {	
+public class PathFinding {	
 	
 	// key Nodes
 	public Node startNode;
@@ -83,14 +83,21 @@ public class PahtFinding {
 	}
 
 	public ArrayList<Point> getPath(int x, int y, int toX, int toY, ToolsEnums.UnitMovementType movementType, byte [][] map, int mapSizeX, int mapSizeY){
+		if(toX < 0 || toX >= mapSizeX || toY < 0 || toY >= mapSizeY){
+			return null;
+		}
+		
 		// init data
 		this.movementType = movementType;
 		this.map = map;
+		this.mapSizeX = mapSizeX;
+		this.mapSizeY = mapSizeY;
+		
 		openList = new ArrayList<Node>();
 		closedList = new ArrayList<Node>();
 		
-		endNode = new Node(toX, toY, map[getX(toX)][toY]);
-		startNode = new Node(x, y, map[getX(x)][y]);
+		endNode = new Node(toX, toY, this.map[toX][toY]);
+		startNode = new Node(x, y, this.map[x][y]);
 		
 		if(endNode.compare(startNode)){
 			return null;
@@ -105,31 +112,21 @@ public class PahtFinding {
 		
 		return path;
 	}
-	
-	private int getX(int i){
-		// used for cycled map
-		if(i < 0){
-			return mapSizeX + i - 1;
-		}
-		
-		if(i >= mapSizeX){
-			return mapSizeX - i;
-		}
-		
-		return i;
-	}
+
 	
 	private void search(){
 		Node node = startNode;
 		
 		while(!node.compare(endNode)){
-			
+			int startX = Math.max(0, node.x - 1);
+			int endX = Math.min(mapSizeX - 1, node.x + 1);
 			int startY = Math.max(0, node.y - 1);
 			int endY = Math.min(mapSizeY - 1, node.y + 1);
 			
-			for(int i = node.x - 1; i <= node.x + 1; ++i){
+			for(int i = startX; i <= endX; ++i){
 				for(int j = startY; j <= endY; ++j){
-					Node test = new Node(i, j, map[getX(i)][j]);
+					Node test = null;
+					test = new Node(i, j, map[i][j]);
 					
 					if(test.compare(endNode)){
 						test = endNode;
@@ -137,7 +134,7 @@ public class PahtFinding {
 					
 					if(test.compare(node) ||
 					   !movementType.isPassable(test.height) ||
-					   !isPassable(map[getX(test.x)][test.y], map[getX(node.x)][node.y]) )
+					   !isPassable(map[test.x][test.y], map[node.x][node.y]) )
 					{
 						continue;
 					}
@@ -190,7 +187,7 @@ public class PahtFinding {
 			node = openList.get(0);
 			openList.remove(0);
 		}
-
+		
 		buildPath();
 		this.isFinded = true;
 	}

@@ -1,12 +1,14 @@
 package gui;
 
 import java.awt.Image;
+import java.io.IOException;
 
 import misc.Enums;
 import misc.Environment;
 import recources.Recources;
 import render.Drawble;
 import script.gui.ScriptGui;
+import tasks.Task;
 
 abstract public class GuiElement implements Drawble {
 	
@@ -30,13 +32,17 @@ abstract public class GuiElement implements Drawble {
 	protected boolean selected;
 	
 	// label
+	protected String title = "";
 	protected String text = "";
 	
 	// scripts
-	protected ScriptGui script;
+	protected GuiLayer layer;
+	private ScriptGui script;
 	
-	public GuiElement() {
+	public GuiElement(String titile) {
+		this.title = titile;
 		position = Enums.GuiPosition.TOP_LEFT;
+		layer = new GuiLayer(0);
 		setTexture("null");
 		setTextureSelected("null_selected");
 	}
@@ -55,6 +61,10 @@ abstract public class GuiElement implements Drawble {
 	private void setDrawPosition(int x, int y){
 		this.drawX = x;
 		this.drawY = y;
+	}
+	
+	public void setLayer(int layer){
+		this.layer.value = layer;
 	}
 	
 	public void updateDrawPosition(int xPos, int yPos, int w, int h){
@@ -131,7 +141,7 @@ abstract public class GuiElement implements Drawble {
 	public void setSelected(boolean select) {
 		this.selected = select;
 	}
-	
+
 	public void setText(String text){
 		this.text = text;
 	}
@@ -167,5 +177,13 @@ abstract public class GuiElement implements Drawble {
 	
 	public ScriptGui getScript(){
 		return script;
+	}
+	
+	public String getTitle(){
+		return title;
+	}
+
+	public void executeScript(Task task) throws IOException {
+		this.script.execute(task);
 	}
 }
