@@ -4,7 +4,7 @@ import game.GamesMng;
 
 import java.io.IOException;
 
-import misc.Const;
+import misc.ToolsConst;
 import net.Message;
 import net.Message.Prefix;
 import network.Client;
@@ -12,7 +12,7 @@ import network.ClientPool;
 
 public class TaskLogic {
 	
-	public static void pushTask(Task task) throws IOException{
+	public static void pushTask(Task task) throws Throwable{
 		switch(task.msg.prefix){
 		
 			case CHECK_VERSION:
@@ -50,25 +50,41 @@ public class TaskLogic {
 			case REQ_READY_CHECK:
 				requestReadyCheck(task);
 				break;
-		
+				
+			case PLAYER_ACTION:
+				playerAction(task);
+				break;
+				
+			case GAME_TURN_END:
+				gameTurnEnd(task);
+				break;
+			
+			case CHAT_MSG:
+				chatMsg(task);
+				break;
+				
 			default: break;
 		}
 	}
 
-	private static void disconnect(Task task) throws IOException {
+	private static void disconnect(Task task) throws Throwable {
 		Client client = ClientPool.remove(task.clientId);
 		
-		if(client != null && client.gameId != -1){
-			GamesMng.get(client.gameId).logic.removePlayer(task.clientId);
+		if(client != null){
+			if(client.gameId != -1){
+				GamesMng.get(client.gameId).gamedata.removePlayer(task.clientId);
+			}
+			
+			client.disconnect();
 		}
 	}
 	
 	private static void checkVersion(Task task) throws IOException{
-		if(task.msg.data.compareTo(""+Const.version+"."+Const.subVersion) == 0){
+		if(task.msg.data.compareTo(""+ToolsConst.version+"."+ToolsConst.subVersion) == 0){
 			ClientPool.sendMsg(task.clientId, new Message(Prefix.CONNECTION_OK, null));
 		}
 		else{
-			ClientPool.sendMsg(task.clientId, new Message(Prefix.CONNECTION_ERR, ""+Const.version+"."+Const.subVersion));
+			ClientPool.sendMsg(task.clientId, new Message(Prefix.CONNECTION_ERR, ""+ToolsConst.version+"."+ToolsConst.subVersion));
 		}
 	}
 	
@@ -82,35 +98,46 @@ public class TaskLogic {
 		if(arr != null && arr.length == 2){
 			int gameId = Integer.valueOf(arr[0]);
 			String playerName = arr[1];
-			GamesMng.get(gameId).logic.addPlayer(task.clientId, playerName);
+			GamesMng.get(gameId).gamedata.addPlayer(task.clientId, playerName);
 		}
 		else{
 			ClientPool.sendMsg(task.clientId, new Message(Prefix.GAME_JOIN_ERR, "no game selected or no playerName"));
 		}
 	}
 	
+	private static int getGameId(Task task){
+		return ClientPool.getClient(task.clientId).gameId;
+	}
+	
 	private static void requestGameLeave(Task task) throws IOException {
-		int gameId = ClientPool.getClient(task.clientId).gameId;
-		GamesMng.get(gameId).logic.removePlayer(task.clientId);
+		GamesMng.get(getGameId(task)).gamedata.removePlayer(task.clientId);
 	}
 
 	private static void requestGameData(Task task) throws IOException {
-		int gameId = ClientPool.getClient(task.clientId).gameId;
-		GamesMng.get(gameId).logic.sendGameData(task.clientId);
+		GamesMng.get(getGameId(task)).gamedata.sendGameData(task.clientId);
 	}
 	
 	private static void requestTeamCreate(Task task) throws IOException {
-		int gameId = ClientPool.getClient(task.clientId).gameId;
-		GamesMng.get(gameId).logic.addTeam(task.clientId, task.msg.data);
+		GamesMng.get(getGameId(task)).gamedata.addTeam(task.clientId, task.msg.data);
 	}
 	
 	private static void requestTeamChoose(Task task) throws IOException {
-		int gameId = ClientPool.getClient(task.clientId).gameId;
-		GamesMng.get(gameId).logic.teamChoose(task.clientId, task.msg.data);
+		GamesMng.get(getGameId(task)).gamedata.teamChoose(task.clientId, task.msg.data);
 	}
 	
 	private static void requestReadyCheck(Task task) throws IOException {
-		int gameId = ClientPool.getClient(task.clientId).gameId;
-		GamesMng.get(gameId).logic.playerReadyCheck(task.clientId);
+		GamesMng.get(getGameId(task)).gamedata.playerReadyCheck(task.clientId);
+	}
+	
+	private static void playerAction(Task task) throws IOException {
+		GamesMng.get(getGameId(task)).gamedata.addPlayerAction(task.clientId, task.msg.data);
+	}
+	
+	private static void gameTurnEnd(Task task) throws IOException {
+		GamesMng.get(getGameId(task)).gamedata.gameTurnEnd(task.clientId);
+	}
+	
+	private static void chatMsg(Task task) throws IOException {
+		GamesMng.get(getGameId(task)).gamedata.gameChat(task.clientId, task.msg.data);
 	}
 }

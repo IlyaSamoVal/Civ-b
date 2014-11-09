@@ -43,8 +43,8 @@ public class AssetsNative extends Assets {
 		addImage(Const.imgMenu, Tile.getTile(Const.assetsNative + "menu.png"));
 		
 		// buttons
-		addImage("button", Tile.getTile(Const.assetsNative+"gui/button.png"));
-		addImage("button_select", Tile.getTile(Const.assetsNative+"gui/button_select.png"));
+		addImage(Const.imgButton, Tile.getTile(Const.assetsNative+"gui/button.png"));
+		addImage(Const.imgButtonSelected, Tile.getTile(Const.assetsNative+"gui/button_select.png"));
 		
 		addImage("button_menu", Tile.getTile(Const.assetsNative+"gui/button_menu.png"));
 		addImage("button_menu_select", Tile.getTile(Const.assetsNative+"gui/button_menu_select.png"));
@@ -53,13 +53,20 @@ public class AssetsNative extends Assets {
 		addImage("slider", Tile.getTile(Const.assetsNative+"gui/slider.png"));
 		
 		// panes
-		addImage("pane", Tile.getTile(Const.assetsNative+"gui/pane.png"));
+		addImage(Const.imgPane, Tile.getTile(Const.assetsNative+"gui/pane.png"));
 		
 		// cursor
-		addImage("cursor_nodeselect", Tile.getTile(Const.assetsNative + "cursor/cursor_nodeselect_draw.png"));
+		addImage(Const.imgSelect, Tile.getTile(Const.assetsNative + "cursor/cursor_nodeselect_draw.png"));
 		
 		// window
 		addImage(Const.imgWindow, Tile.getTile(Const.assetsNative+"gui/window.png"));
+		
+		// chat
+		addImage(Const.imgChat, Tile.getTile(Const.assetsNative + "gui/chat.png"));
+		addImage(Const.imgChatSelected, Tile.getTile(Const.assetsNative + "gui/chat_selected.png"));
+		
+		// inventory
+		addImage(Const.imgInventorySlot, Tile.getTile(Const.assetsNative + "gui/inventory_slot.png"));
 	}
 	
 	private void loadGreyTiles(){
@@ -86,6 +93,7 @@ public class AssetsNative extends Assets {
 
 	private void loadGeologyTiles() {
 		int rgb = 0;
+		
 		for(int i = 0; i < 128; ++i){
 			BufferedImage img = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
 			
@@ -106,6 +114,59 @@ public class AssetsNative extends Assets {
 			
 			addImage("geology"+i, new Tile(img));
 		}
+	}	
+	
+	private void loadTermalTiles(int tMin, int tMax) {
+		int tic = Math.abs(tMax - tMin + 5) / 5;
+		int colorTic = 255/tic;
+		
+		int t = tMin;
+		int r = 255;
+		int g = 0;
+		int b = 0;
+		
+		// r,0,b -> 0,0,b
+		for(int i = 0; i < tic; ++i){
+			r -= colorTic;
+			setColor(r, g, b, t++);
+		}
+		
+		// 0,0,b -> 0,g,b
+		for(int i = 0; i < tic; ++i){
+			g += colorTic;
+			setColor(r, g, b, t++);
+		}
+		
+		// 0,g,b -> 0,g,0
+		for(int i = 0; i < tic; ++i){
+			b -= colorTic;
+			setColor(r, g, b, t++);
+		}
+		
+		// 0,g,0 -> r,g,0
+		for(int i = 0; i < tic; ++i){
+			r += colorTic;
+			setColor(r, g, b, t++);
+		}
+		// r,g,0 -> r,0,0
+		for(int i = 0; i < tic; ++i){
+			g -= colorTic;
+			setColor(r, g, b, t++);
+		}
+	}
+	
+	private void setColor(int r, int g, int b, int t){
+		BufferedImage img = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+		int a = 48;
+		int col = (a << 24) + (r << 16) + (g << 8) + b;
+		
+		for(int x = 0; x < 32; ++x){
+			for(int y = 0; y < 32; ++y){
+				img.setRGB(x, y, col);
+			}
+		}
+		
+		addImage("temp"+t, new Tile(img));
 	}
 	
 	private void loadCursors(){
@@ -132,21 +193,42 @@ public class AssetsNative extends Assets {
 	}
 
 	private void loadUnits() {
+		addImage(Const.imgUnitPlayerAtlas, Tile.getTile(Const.assetsNative + "units/playerColor.png"));
 		addImage(Const.imgUnitAvatar, Tile.getTile(Const.assetsNative + "units/avatar.png"));
+		addImage(Const.imgUnitRecruit, Tile.getTile(Const.assetsNative + "units/unit_recruit.png"));
+		addImage(Const.imgUnitCity, Tile.getTile(Const.assetsNative + "units/unit_city.png"));
 	}
 	
 	private void loadActions() {
-		addImage(Const.imgActionMoveto, Tile.getTile(Const.assetsNative + "actions/moveto.png"));
+		// actions
+		addImage(Const.imgActionMoveto, Tile.getTile(Const.assetsNative + "actions/action_moveto.png"));
+		addImage(Const.imgActionCityBuild, Tile.getTile(Const.assetsNative + "actions/action_citybuild.png"));
+		addImage(Const.imgActionBuildRecruit, Tile.getTile(Const.assetsNative + "actions/action_buildrecruit.png"));
+		addImage(Const.imgActionMine, Tile.getTile(Const.assetsNative + "actions/action_mine.png"));
+		addImage(Const.imgActionInventory, Tile.getTile(Const.assetsNative + "actions/action_inventory.png"));
+		addImage(Const.imgActionInteract, Tile.getTile(Const.assetsNative + "actions/action_interact.png"));
+		
+		// interact actions
+		addImage(Const.imgInteractAttack, Tile.getTile(Const.assetsNative + "actions/interact_attack.png"));
+		addImage(Const.imgInteractTalk, Tile.getTile(Const.assetsNative + "actions/interact_talk.png"));
+		addImage(Const.imgInteractWorkAt, Tile.getTile(Const.assetsNative + "actions/interact_workat.png"));
+		addImage(Const.imgInteractRepair, Tile.getTile(Const.assetsNative + "actions/interact_repair.png"));
+		addImage(Const.imgInteractBuildUpdate, Tile.getTile(Const.assetsNative + "actions/interact_build.png"));
+		addImage(Const.imgInteractBuildCityBuilding, Tile.getTile(Const.assetsNative + "actions/interact_build.png"));
 	}
 	
 	private void loadFont() throws FontFormatException, IOException {
 		if(Config.os != "Linux"){
-			font = Font.createFont(Font.TRUETYPE_FONT, new File(Config.classPath + Const.assetsNative + "ttf/font.otf")).deriveFont(12f);
+			font = Font.createFont(Font.TRUETYPE_FONT, new File(Config.classPath + Const.assetsNative + "ttf/PTC75F.ttf")).deriveFont(12f);
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			ge.registerFont(font);
 		}
 	}
-	
+
+	private void loadItems() {
+		addImage(Const.imgItemRecource, Tile.getTile(Const.assetsNative + "items/recource.png"));
+	}
+
 	@Override
 	public void init() throws FontFormatException, IOException  {		
 		loadGui();
@@ -157,12 +239,18 @@ public class AssetsNative extends Assets {
 		loadUnits();
 		loadActions();
 		loadFont();
+		loadItems();
 		
 		System.gc();
 		Log.debug("Assets Native tiles loaded: " + tiles.size());
 		Log.debug("Assets Native cursors loaded: " + cursors.size());
 	}
-
+	
+	@Override
+	public void loadTemperatureColor(int tMin, int tMax) {
+		loadTermalTiles(tMin, tMax);
+	}
+	
 	@Override
 	public Image getImage(String name) {
 		if(tiles.containsKey(name)){

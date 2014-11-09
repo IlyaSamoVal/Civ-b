@@ -6,7 +6,6 @@ import java.util.HashSet;
 import javax.media.opengl.GL3;
 
 import player.units.Unit;
-import player.units.UnitsMng;
 import recources.Recources;
 import render.Drawble;
 import misc.Const;
@@ -27,6 +26,9 @@ public class Node implements Drawble {
 	
 	// Geology
 	public byte geology;
+	
+	// Climat
+	public int termal; // temperature
 	
 	public Node() {
 		units = new HashSet<Integer>();
@@ -66,21 +68,16 @@ public class Node implements Drawble {
 	private int drawX;
 	private int drawY;
 	
-	public void draw(Graphics g, int drawX, int drawY) {
+	public void draw(Graphics g, int drawX, int drawY, int tic) {
 		this.drawX = drawX;
 		this.drawY = drawY;
-		draw(g);
+		draw(g, tic);
 	}
 	
 	@Override
-	public void draw(Graphics g) {
+	public void draw(Graphics g, long tic) {
 		if(haveWaypoints()){
 			g.drawImage(Recources.getImage(Const.imgNull), drawX, drawY, 32, 32, null);
-		}
-		
-		for(Integer unitId: units){
-			Unit unit = UnitsMng.getUnit(unitId);
-			unit.draw(g, drawX, drawY);
 		}
 	}
 

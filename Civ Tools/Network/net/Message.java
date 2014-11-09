@@ -44,24 +44,29 @@ public class Message implements Serializable {
 		GAME_BEGIN, // --> begin transfer start data
 		GAME_PLAYER_DATA,   // updates and new game objects
 		GAME_PLAYER_ACTION, // player turn actions		
+		
 		// turns
 		GAME_TURN, 		// end of data transfer, back control to player
 		GAME_TURN_END, 	//
 		
-		
 		// data (server)
 		OBJ_TEAM,
 		OBJ_PLAYER,
+		OBJ_GAMEOBJECT,
 		OBJ_UNIT,
+		OBJ_IVENTORY,
 		
 		// update data (server)
 		UPD_TEAM,
 		UPD_PLAYER,
+		UPD_GAMEOBJECT,
 		UPD_UNIT,
+		UPD_INVENTORY,
 		
 		// del objects (server)
 		DEL_TEAM,
 		DEL_PLAYER,
+		DEL_GAMEOBJECT,
 		DEL_UNIT,
 		
 		// player actions

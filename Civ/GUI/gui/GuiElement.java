@@ -72,7 +72,7 @@ abstract public class GuiElement implements Drawble {
 			case BOTTOM_CENTER:
 				setDrawPosition(xPos + w/2 - sizeX/2 + x, yPos + h - sizeY + y);
 				break;
-				
+			
 			case BOTTOM_LEFT:
 				setDrawPosition(xPos + x, yPos + h - sizeY + y);
 				break;
@@ -97,6 +97,7 @@ abstract public class GuiElement implements Drawble {
 				setDrawPosition(xPos + w/2 - sizeX/2 + x, yPos + y);
 				break;
 				
+			case ABSOLUTE:	
 			case TOP_LEFT:
 				setDrawPosition(xPos + x, yPos + y);
 				break;
@@ -118,8 +119,16 @@ abstract public class GuiElement implements Drawble {
 		textureNormal = Recources.getImage(name);
 	}
 	
+	public void setTexture(Image image){
+		textureNormal = image;
+	}
+	
 	public void setTextureSelected(String name){
 		textureSelected = Recources.getImage(name);
+	}
+	
+	public void setTextureSelected(Image image){
+		textureSelected  = image;
 	}
 	
 	public boolean checkCollision() {
@@ -136,6 +145,10 @@ abstract public class GuiElement implements Drawble {
 
 	public void setVisible(boolean visible){
 		this.visible = visible;
+	}
+	
+	public boolean getVisible(){
+		return this.visible;
 	}
 	
 	public void setSelected(boolean select) {

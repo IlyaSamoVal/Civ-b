@@ -24,6 +24,7 @@ public class Enums {
 		MOUSE_RELEASED,
 		MOUSE_CLICKED,
 		MOUSE_PRESSED,
+		MOUSE_WHEEL,
 		
 		// keyboard
 		KEYBOARD_PRESSED,
@@ -36,7 +37,7 @@ public class Enums {
 		GUI_CURSOR_HIDE,
 		GUI_SELECTION_RESET,  //(GUI)gui, null
 		GUI_SELECTION_SELECT, //(GUI)gui, (String)guiElementTitle
-		GUI_TABLE_UPDATESELECTION,
+		GUI_UNIT_SELECT,
 		
 		// Scene
 		SCENE_LOADING,
@@ -54,22 +55,30 @@ public class Enums {
 		
 		// Scene Prepearing
 		GAME_BEGIN,
+		GAME_TURN,
+		GAME_TURN_END,
 		
 		// Data
 		GAME_MSG,
 		GAME_OBJ_PLAYER, //
 		GAME_OBJ_TEAM,   //
 		GAME_OBJ_UNIT,
+		GAME_OBJ_INVENTORY,
 		
 		// Data update
 		GAME_UPD_PLAYER,
 		GAME_UPD_TEAM,
 		GAME_UPD_UNIT,
+		GAME_UPD_INVENTORY,
 		
 		// Data delete
 		GAME_DEL_PLAYER,
 		GAME_DEL_TEAM,
 		GAME_DEL_UNIT,
+		
+		// Player actions
+		PLAYER_ACTION,
+		CHAT_MSG,
 		
 		// Painter
 		PAINTER_CHANGE_SCENE, //(String)sceneKey
@@ -78,7 +87,7 @@ public class Enums {
 		NETWORK_MESSAGE_READ,
 		
 		// Player action
-		UNIT_ACTION;
+		UNIT_ACTION,
 	}
 	
 	public static enum GuiPosition {
@@ -90,7 +99,8 @@ public class Enums {
 		CENTER_RIGHT,
 		BOTTOM_LEFT,
 		BOTTOM_CENTER,
-		BOTTOM_RIGHT,
+		BOTTOM_RIGHT, 
+		ABSOLUTE,
 	}
 	
 	public static enum Direct {
@@ -112,7 +122,8 @@ public class Enums {
 	public static enum MapDrawMode {
 		HEIGHT,
 		GEOLOGY,
-		TERRAIN;
+		TERRAIN, 
+		TERMAL,
 	}
 	
 	public static enum TableMetadata {

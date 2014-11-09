@@ -17,11 +17,16 @@ public class GuiElementButtonUnitAction extends GuiElementButton {
 	}
 	
 	public void setActionIcon(String textureTitle){
-		this.actionIcon = Recources.getImage(textureTitle);
+		if(textureTitle != null){
+			this.actionIcon = Recources.getImage(textureTitle);
+		}
+		else{
+			this.actionIcon = null;
+		}
 	}
 	
 	@Override
-	public void draw(Graphics g) {
+	public void draw(Graphics g, long tic) {
 		if(this.visible){
 			g.setColor(Color.white); // for text drawing
 			
@@ -32,7 +37,10 @@ public class GuiElementButtonUnitAction extends GuiElementButton {
 				g.drawImage(this.textureNormal, drawX, drawY, sizeX, sizeY, null);
 			}
 			
-			g.drawImage(this.actionIcon, drawX, drawY, sizeX, sizeY, null);
+			if(this.actionIcon != null){
+				g.drawImage(this.actionIcon, drawX, drawY, sizeX, sizeY, null);
+			}
+			
 			g.drawString(this.text, drawX + 5, drawY + 15);
 		}
 	}

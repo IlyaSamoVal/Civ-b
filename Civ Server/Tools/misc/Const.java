@@ -4,8 +4,6 @@ public class Const {
 	
 	// version
 	public static final String title = "Civ server";
-	public static final int version = 0;
-	public static final int subVersion = 87;
 	
 	// server settings
 	public static final int port = 6600;
@@ -14,8 +12,11 @@ public class Const {
 	public static final boolean debug = true;
 	public static final boolean service = true;
 	
-	// game settings
+	// game map settings
 	public static final int playersMax = 128;
 	public static final int mapSizeX = 150;
 	public static final int mapSizeY = 100;
+
+	public static int tMin = -20;
+	public static int tMax = 30;
 }

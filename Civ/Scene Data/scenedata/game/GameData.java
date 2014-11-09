@@ -13,14 +13,19 @@ public class GameData {
 	
 	// team
 	public GamePlayersData users;
+	public boolean turn;
 	
 	// units
+	public int clientId;
 	public UnitsMng units;
 	
-	public GameData(GameMap map) {
-		this.map = map;
+	public GameData(int clientId, long seed, int mapSizeX, int mapSizeY, int tMin, int tMax) {
 		this.users = new GamePlayersData();
+		this.clientId = clientId;
+		
+		this.map = new GameMap(seed, mapSizeX, mapSizeY, tMin, tMax);
 		this.units = new UnitsMng(map);
+		this.map.units = this.units; // sorry for bullshitcode t_t
 	}
 
 	public void addPlayer(Player player) {

@@ -14,18 +14,18 @@ public class GuiElementButton extends GuiElement {
 	}
 
 	@Override
-	public void draw(Graphics g) {
+	public void draw(Graphics g, long tic) {
 		if(this.visible){
 			g.setColor(Color.white); // for text drawing
 			
 			if(this.selected){
 				g.drawImage(this.textureSelected, drawX, drawY, sizeX, sizeY, null);
-				g.drawString(this.text, drawX + 5, drawY + 15);
 			}
 			else{
 				g.drawImage(this.textureNormal, drawX, drawY, sizeX, sizeY, null);
-				g.drawString(this.text, drawX + 5, drawY + 15);
 			}
+			
+			g.drawString(this.text, drawX + sizeX/2 - g.getFontMetrics().stringWidth(text)/2, drawY +  g.getFontMetrics().getHeight());
 		}
 	}
 

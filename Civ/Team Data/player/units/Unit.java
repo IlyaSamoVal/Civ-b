@@ -24,8 +24,12 @@ public class Unit implements Sentble, Drawble {
 	public int y;
 	public int type;
 
+	// items
+	public UnitInventory inventory;
+	
 	public Unit(String data){
 		String [] arr = data.split(":");
+		this.inventory = new UnitInventory();
 		buildObj(arr);
 	}
 
@@ -52,11 +56,12 @@ public class Unit implements Sentble, Drawble {
 	@Override
 	public void updateObj(String [] arr) {
 		switch(arr[1]){
-			case "id": 		 id = Integer.parseInt(arr[1]); break;
-			case "playerId": playerId = Integer.parseInt(arr[1]); break;
-			case "x": 		 x = Integer.parseInt(arr[1]); break;
-			case "y": 		 y = Integer.parseInt(arr[1]); break;
-			case "type": 	 type = Integer.parseInt(arr[1]); break;
+			case "id": 		 id = Integer.parseInt(arr[2]); break;
+			case "playerId": playerId = Integer.parseInt(arr[2]); break;
+			case "x": 		 x = Integer.parseInt(arr[2]); break;
+			case "y": 		 y = Integer.parseInt(arr[2]); break;
+			case "xy":		 x = Integer.parseInt(arr[2]); y = Integer.parseInt(arr[3]); break;
+			case "type": 	 type = Integer.parseInt(arr[2]); break;
 		}
 	}
 
@@ -64,25 +69,26 @@ public class Unit implements Sentble, Drawble {
 	private int drawX;
 	private int drawY;
 
-	public void setPath(ArrayList<Point> way) {
+	public void setPath(UnitsMng units, ArrayList<Point> way) {
 		if(way == null){
-			UnitsMng.removeWay(id);
+			units.removeWay(id);
 		}
 		else{
-			UnitsMng.addWay(id, way);
+			units.addWay(id, way);
 		}
 	}	
 	
-	public void draw(Graphics g, int drawX, int drawY) {
+	public void draw(Graphics g, int drawX, int drawY, long tic) {
 		this.drawX = drawX;
 		this.drawY = drawY;
-		draw(g);
+		draw(g, tic);
 	}
 	
 
 	@Override
-	public void draw(Graphics g) {
-		g.drawImage(Recources.getImage(Const.imgUnitAvatar), drawX, drawY-37, 32, 69, null);
+	public void draw(Graphics g, long tic) {
+		g.drawImage(Recources.getImage(Const.imgUnitPlayerAtlas), drawX, drawY, 32, 32, null);
+		g.drawImage(Recources.getUnitImage(this.type), drawX, drawY, 32, 32, null);
 	}
 
 	@Override
